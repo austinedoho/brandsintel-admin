@@ -32,73 +32,28 @@ export default function AdminDashboard() {
     }
   }, [isLoggedIn, currentTab]);
 
-  async function loadDashboardData() {
-    try {
-      setLoading(true);
-      // Fetch all data from backend
-      // For now, we'll simulate data - replace with real API calls
-      
-      // Simulated data
-      setStats({
-        totalUsers: 1247,
-        totalBusinesses: 45,
-        monthlyRevenue: 750000,
-        checksThisMonth: 3421,
-      });
+async function loadDashboardData() {
+  try {
+    setLoading(true);
+    const API_BASE = 'https://brandsintel-backend.onrender.com';
 
-      setBusinesses([
-        {
-          id: '1',
-          name: 'Jumia Nigeria',
-          website: 'jumia.com.ng',
-          trustScore: 92,
-          riskLevel: 'established',
-          verified: true,
-          verifiedDate: '2024-08-15',
-          subscriptionTier: 'pro',
-          monthlyFee: 50000,
-          status: 'active',
-          lastChecked: '2024-08-24',
-        },
-        {
-          id: '2',
-          name: 'Konga',
-          website: 'konga.com',
-          trustScore: 88,
-          riskLevel: 'established',
-          verified: true,
-          verifiedDate: '2024-08-10',
-          subscriptionTier: 'basic',
-          monthlyFee: 30000,
-          status: 'active',
-          lastChecked: '2024-08-23',
-        },
-        {
-          id: '3',
-          name: 'ABC Electronics',
-          website: 'abc-electronics.com',
-          trustScore: 65,
-          riskLevel: 'caution',
-          verified: false,
-          verifiedDate: null,
-          subscriptionTier: 'none',
-          monthlyFee: 0,
-          status: 'pending',
-          lastChecked: '2024-08-22',
-        },
-      ]);
+    // Fetch real data from backend
+    const statsRes = await axios.get(`${API_BASE}/api/stats`);
+    const businessesRes = await axios.get(`${API_BASE}/api/businesses`);
+    const usersRes = await axios.get(`${API_BASE}/api/users`);
+    const paymentsRes = await axios.get(`${API_BASE}/api/payments`);
 
-      setUsers([
-        { id: '1', phone: '+234 701 XXX XXXX', checksCount: 12, lastCheck: '2024-08-24', location: 'Lagos' },
-        { id: '2', phone: '+234 703 XXX XXXX', checksCount: 8, lastCheck: '2024-08-24', location: 'Abuja' },
-        { id: '3', phone: '+234 705 XXX XXXX', checksCount: 25, lastCheck: '2024-08-23', location: 'Lagos' },
-      ]);
-    } catch (error) {
-      console.error('Failed to load data:', error);
-    } finally {
-      setLoading(false);
-    }
+    setStats(statsRes.data);
+    setBusinesses(businessesRes.data);
+    setUsers(usersRes.data);
+    setPayments(paymentsRes.data);
+  } catch (error) {
+    console.error('Failed to load data:', error);
+    alert('Failed to load dashboard data. Check console for errors.');
+  } finally {
+    setLoading(false);
   }
+}
 
   if (!isLoggedIn) {
     return (
