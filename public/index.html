@@ -1,25 +1,861 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="BrandsIntel Admin Dashboard - Centralized control for your verification platform"
-    />
-    <title>BrandsIntel Admin Dashboard</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandsTrack Admin - Real Functional Dashboard</title>
     <style>
-      html, body, #root {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .login-container h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #5568d3;
+        }
+
+        .dashboard {
+            display: none;
+            padding: 20px;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            background: white;
+            padding: 0 20px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .nav-tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .nav-tab:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        .btn.secondary {
+            background: #e5e7eb;
+            color: #333;
+        }
+
+        .btn.secondary:hover {
+            background: #d1d5db;
+        }
+
+        .btn.danger {
+            background: #ef4444;
+        }
+
+        .btn.danger:hover {
+            background: #dc2626;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        .switch {
+            width: 50px;
+            height: 28px;
+            background: #ccc;
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+            border: none;
+        }
+
+        .switch.on {
+            background: #10b981;
+        }
+
+        .switch::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .switch.on::after {
+            left: 24px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert.success {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #047857;
+        }
+
+        .alert.error {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #dc2626;
+        }
+
+        .alert.loading {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th {
+            background: #f9f9f9;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #eee;
+            font-size: 13px;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="login-container">
+        <h1>🛡️ BrandsTrack Admin</h1>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Backend URL</label>
+                <input type="url" id="backendUrl" placeholder="https://brandsintel-backend.onrender.com" value="https://brandsintel-backend.onrender.com" required>
+            </div>
+            <div class="form-group">
+                <label>Admin Password</label>
+                <input type="password" id="password" placeholder="Enter admin password" required autofocus>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+    </div>
+
+    <!-- DASHBOARD SCREEN -->
+    <div id="dashboardScreen" class="dashboard">
+        <div class="header">
+            <h1>🛡️ BrandsTrack Admin Dashboard</h1>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('pricing')">💰 Pricing</button>
+            <button class="nav-tab" onclick="switchTab('features')">✨ Features</button>
+            <button class="nav-tab" onclick="switchTab('payments')">💳 Payments</button>
+            <button class="nav-tab" onclick="switchTab('companies')">🏢 Companies</button>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h2>📊 System Overview</h2>
+                <div class="stat-grid" id="statsGrid">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRICING TAB -->
+        <div id="pricing" class="tab-content">
+            <div class="card">
+                <h2>💰 Premium Pricing</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Premium Monthly Price (₦)</label>
+                        <input type="number" id="priceInput" placeholder="30000" min="1000">
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <input type="text" id="currencyInput" value="NGN" readonly>
+                    </div>
+                </div>
+                <button class="btn" onclick="updatePrice()">💾 Save Price</button>
+            </div>
+        </div>
+
+        <!-- FEATURES TAB -->
+        <div id="features" class="tab-content">
+            <div class="card">
+                <h2>✨ Feature Management</h2>
+                <div id="featuresContainer">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+                <button class="btn" onclick="saveFeatures()" style="margin-top: 20px;">💾 Save Features</button>
+            </div>
+        </div>
+
+        <!-- PAYMENTS TAB -->
+        <div id="payments" class="tab-content">
+            <div class="card">
+                <h2>💳 Payment Transactions</h2>
+                <div id="paymentsContainer">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPANIES TAB -->
+        <div id="companies" class="tab-content">
+            <div class="card">
+                <h2>🏢 Manage Companies</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Search Company</label>
+                        <input type="text" id="searchInput" placeholder="Search by name or CAC..." onkeyup="searchCompanies()">
+                    </div>
+                </div>
+                <div id="companiesContainer">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let backendUrl = '';
+        let adminPassword = '';
+        let currentSettings = {};
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            backendUrl = document.getElementById('backendUrl').value;
+            adminPassword = document.getElementById('password').value;
+
+            showAlert('Connecting...', 'loading');
+
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/settings`, {
+                    headers: { 'x-admin-key': adminPassword }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    currentSettings = data.settings;
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('dashboardScreen').classList.add('active');
+                    loadAllData();
+                    showAlert('✅ Login successful!', 'success');
+                } else {
+                    showAlert('❌ Invalid password or connection error', 'error');
+                }
+            } catch (err) {
+                showAlert(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        async function loadAllData() {
+            loadDashboard();
+            loadPricing();
+            loadFeatures();
+            loadPayments();
+            loadCompanies();
+        }
+
+        async function loadDashboard() {
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/settings`, {
+                    headers: { 'x-admin-key': adminPassword }
+                });
+                const data = await res.json();
+                currentSettings = data.settings;
+
+                const statsHtml = `
+                    <div class="stat-box">
+                        <div class="stat-label">Premium Price</div>
+                        <div class="stat-value">₦${currentSettings.premium_monthly_price.toLocaleString()}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Free Searches/Day</div>
+                        <div class="stat-value">${currentSettings.free_searches_per_day}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Articles/Company</div>
+                        <div class="stat-value">${currentSettings.articles_per_company}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Currency</div>
+                        <div class="stat-value">${currentSettings.premium_currency}</div>
+                    </div>
+                `;
+                document.getElementById('statsGrid').innerHTML = statsHtml;
+            } catch (err) {
+                document.getElementById('statsGrid').innerHTML = `<div class="alert error" style="display:block">Error loading data: ${err.message}</div>`;
+            }
+        }
+
+        async function loadPricing() {
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/settings`, {
+                    headers: { 'x-admin-key': adminPassword }
+                });
+                const data = await res.json();
+                document.getElementById('priceInput').value = data.settings.premium_monthly_price;
+                document.getElementById('currencyInput').value = data.settings.premium_currency;
+            } catch (err) {
+                console.error('Error loading pricing:', err);
+            }
+        }
+
+        async function updatePrice() {
+            const price = parseInt(document.getElementById('priceInput').value);
+
+            if (!price || price < 1000) {
+                showAlert('❌ Please enter a valid price (minimum ₦1,000)', 'error');
+                return;
+            }
+
+            showAlert('Saving price...', 'loading');
+
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/settings/update`, {
+                    method: 'POST',
+                    headers: {
+                        'x-admin-key': adminPassword,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ premium_monthly_price: price })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    currentSettings = data.settings;
+                    showAlert(`✅ Price updated to ₦${price.toLocaleString()}!`, 'success');
+                    loadDashboard();
+                } else {
+                    showAlert('❌ Failed to update price', 'error');
+                }
+            } catch (err) {
+                showAlert(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        async function loadFeatures() {
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/settings`, {
+                    headers: { 'x-admin-key': adminPassword }
+                });
+                const data = await res.json();
+
+                const features = [
+                    { key: 'featured_listing_enabled', label: 'Featured Listing' },
+                    { key: 'customer_reviews_enabled', label: 'Customer Reviews' },
+                    { key: 'fraud_response_enabled', label: 'Fraud Response' },
+                    { key: 'api_access_enabled', label: 'API Access' },
+                    { key: 'certificate_download_enabled', label: 'Certificate Download' },
+                    { key: 'priority_support_enabled', label: 'Priority Support' }
+                ];
+
+                let html = '';
+                features.forEach(feature => {
+                    const isEnabled = data.settings[feature.key];
+                    html += `
+                        <div class="toggle-switch">
+                            <button class="switch ${isEnabled ? 'on' : ''}" 
+                                onclick="toggleFeature('${feature.key}', this)"></button>
+                            <span>${feature.label}</span>
+                            <span style="color: #999; font-size: 12px;">${isEnabled ? '(Enabled)' : '(Disabled)'}</span>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('featuresContainer').innerHTML = html;
+            } catch (err) {
+                document.getElementById('featuresContainer').innerHTML = `<div class="alert error" style="display:block">Error loading features: ${err.message}</div>`;
+            }
+        }
+
+        function toggleFeature(key, btn) {
+            btn.classList.toggle('on');
+            const parent = btn.parentElement;
+            const status = btn.classList.contains('on') ? '(Enabled)' : '(Disabled)';
+            parent.querySelector('span:last-child').textContent = status;
+        }
+
+        async function saveFeatures() {
+            showAlert('Saving features...', 'loading');
+
+            const features = [
+                'featured_listing_enabled',
+                'customer_reviews_enabled',
+                'fraud_response_enabled',
+                'api_access_enabled',
+                'certificate_download_enabled',
+                'priority_support_enabled'
+            ];
+
+            const updates = {};
+            features.forEach(feature => {
+                const btn = document.querySelector(`button[onclick*="${feature}"]`);
+                updates[feature] = btn ? btn.classList.contains('on') : false;
+            });
+
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/settings/update`, {
+                    method: 'POST',
+                    headers: {
+                        'x-admin-key': adminPassword,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updates)
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showAlert('✅ Features updated!', 'success');
+                    loadFeatures();
+                } else {
+                    showAlert('❌ Failed to save features', 'error');
+                }
+            } catch (err) {
+                showAlert(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        async function loadPayments() {
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/payments`, {
+                    headers: { 'x-admin-key': adminPassword }
+                });
+                const data = await res.json();
+
+                if (data.payments && data.payments.length > 0) {
+                    let html = `
+                        <div class="stat-grid">
+                            <div class="stat-box">
+                                <div class="stat-label">Total Revenue</div>
+                                <div class="stat-value">₦${(data.stats.total_revenue || 0).toLocaleString()}</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">Successful Payments</div>
+                                <div class="stat-value">${data.stats.successful_payments || 0}</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">Failed Payments</div>
+                                <div class="stat-value">${data.stats.failed_payments || 0}</div>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Company ID</th>
+                                    <th>Amount (₦)</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    data.payments.forEach(payment => {
+                        html += `
+                            <tr>
+                                <td>${payment.company_id ? payment.company_id.substring(0, 8) + '...' : 'N/A'}</td>
+                                <td>${payment.amount.toLocaleString()}</td>
+                                <td><strong>${payment.status}</strong></td>
+                                <td>${new Date(payment.created_at).toLocaleDateString()}</td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</tbody></table>';
+                    document.getElementById('paymentsContainer').innerHTML = html;
+                } else {
+                    document.getElementById('paymentsContainer').innerHTML = '<p>No payments yet</p>';
+                }
+            } catch (err) {
+                document.getElementById('paymentsContainer').innerHTML = `<div class="alert error" style="display:block">Error loading payments: ${err.message}</div>`;
+            }
+        }
+
+        async function loadCompanies() {
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/companies`, {
+                    headers: { 'x-admin-key': adminPassword }
+                });
+                const data = await res.json();
+
+                if (data.companies && data.companies.length > 0) {
+                    let html = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Company Name</th>
+                                    <th>CAC Number</th>
+                                    <th>Status</th>
+                                    <th>Premium Until</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    data.companies.forEach(company => {
+                        const status = company.is_premium ? 'Premium' : 'Free';
+                        const premiumUntil = company.subscription_end_date ? new Date(company.subscription_end_date).toLocaleDateString() : 'N/A';
+                        html += `
+                            <tr>
+                                <td>${company.name}</td>
+                                <td>${company.cac_number || 'N/A'}</td>
+                                <td><strong>${status}</strong></td>
+                                <td>${premiumUntil}</td>
+                                <td>
+                                    ${company.is_premium ? 
+                                        `<button class="btn btn.danger" onclick="downgradCompany('${company.id}')">Downgrade</button>` :
+                                        `<button class="btn" onclick="upgradeCompany('${company.id}')">Upgrade</button>`
+                                    }
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</tbody></table>';
+                    document.getElementById('companiesContainer').innerHTML = html;
+                } else {
+                    document.getElementById('companiesContainer').innerHTML = '<p>No companies yet</p>';
+                }
+            } catch (err) {
+                document.getElementById('companiesContainer').innerHTML = `<div class="alert error" style="display:block">Error loading companies: ${err.message}</div>`;
+            }
+        }
+
+        async function upgradeCompany(companyId) {
+            showAlert('Upgrading company...', 'loading');
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/companies/${companyId}/upgrade`, {
+                    method: 'POST',
+                    headers: {
+                        'x-admin-key': adminPassword,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ subscription_months: 1 })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showAlert('✅ Company upgraded to premium!', 'success');
+                    loadCompanies();
+                } else {
+                    showAlert('❌ Failed to upgrade', 'error');
+                }
+            } catch (err) {
+                showAlert(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        async function downgradCompany(companyId) {
+            showAlert('Downgrading company...', 'loading');
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/companies/${companyId}/downgrade`, {
+                    method: 'POST',
+                    headers: {
+                        'x-admin-key': adminPassword,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showAlert('✅ Company downgraded to free!', 'success');
+                    loadCompanies();
+                } else {
+                    showAlert('❌ Failed to downgrade', 'error');
+                }
+            } catch (err) {
+                showAlert(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        async function searchCompanies() {
+            // Can be implemented if needed
+            loadCompanies();
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert ${type} show`;
+            alert.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(alert);
+
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                }, 4000);
+            }
+        }
+
+        function handleLogout() {
+            backendUrl = '';
+            adminPassword = '';
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('dashboardScreen').classList.remove('active');
+            document.getElementById('password').value = '';
+        }
+    </script>
+</body>
 </html>
