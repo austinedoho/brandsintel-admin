@@ -138,10 +138,12 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
         }
 
         .tab-btn {
             flex: 1;
+            min-width: 140px;
             padding: 15px 20px;
             background: none;
             border: none;
@@ -325,6 +327,14 @@
             background: #dc2626;
         }
 
+        .btn.success {
+            background: #10b981;
+        }
+
+        .btn.success:hover {
+            background: #059669;
+        }
+
         .btn:disabled {
             background: #ccc;
             cursor: not-allowed;
@@ -393,6 +403,130 @@
             font-size: 13px;
         }
 
+        .submission-card {
+            background: #f9f9f9;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .submission-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .submission-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef08a;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #7f1d1d;
+        }
+
+        .submission-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-field {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 13px;
+            color: #333;
+            word-break: break-word;
+        }
+
+        .submission-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .submission-actions button {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .featured-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .slot {
+            background: #f9f9f9;
+            border: 2px dashed #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slot.filled {
+            background: #f0f7ff;
+            border-color: #667eea;
+        }
+
+        .slot-number {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .slot-brand {
+            font-size: 14px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .slot-action {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
         .feature-list {
             list-style: none;
         }
@@ -438,6 +572,28 @@
             margin: 0;
             font-size: 14px;
         }
+
+        @media (max-width: 1024px) {
+            .featured-slots {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .featured-slots {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                min-width: 100px;
+                padding: 12px 15px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -472,6 +628,7 @@
 
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+                <button class="tab-btn" onclick="switchTab('premium-brands')">⭐ Premium Brands</button>
                 <button class="tab-btn" onclick="switchTab('pricing')">💰 Pricing Tiers</button>
                 <button class="tab-btn" onclick="switchTab('features')">✨ Features</button>
                 <button class="tab-btn" onclick="switchTab('payments')">💳 Payments</button>
@@ -484,6 +641,27 @@
                     <h2>📊 System Overview</h2>
                     <div class="grid" id="statsGrid">
                         <div class="loading"><div class="spinner"></div> Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREMIUM BRANDS TAB -->
+            <div id="premium-brands" class="tab-content">
+                <div class="card">
+                    <h2>⭐ Premium Brand Management</h2>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 15px; color: #333;">📋 Pending Submissions</h3>
+                        <div id="pendingSubmissions">
+                            <div class="loading"><div class="spinner"></div> Loading submissions...</div>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 2px solid #f0f0f0; padding-top: 30px;">
+                        <h3 style="margin-bottom: 15px; color: #333;">✨ Featured Brands (8 Slots)</h3>
+                        <div class="featured-slots" id="featuredSlots">
+                            <div class="loading" style="grid-column: 1/-1;"><div class="spinner"></div> Loading featured brands...</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -625,6 +803,7 @@
 
         async function loadAllData() {
             loadDashboard();
+            loadPremiumBrands();
             loadPricing();
             loadFeatures();
             loadPayments();
@@ -662,6 +841,154 @@
                 document.getElementById('statsGrid').innerHTML = html;
             } catch (err) {
                 document.getElementById('statsGrid').innerHTML = `<div style="grid-column: 1/-1; color: red;">Error: ${err.message}</div>`;
+            }
+        }
+
+        async function loadPremiumBrands() {
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/premium-brand/pending`, {
+                    headers: { 'x-admin-key': adminPassword }
+                });
+                if (!res.ok) throw new Error('Failed to fetch premium brands');
+                
+                const data = await res.json();
+                let html = '';
+
+                if (data.submissions && data.submissions.length > 0) {
+                    html = data.submissions.map(sub => `
+                        <div class="submission-card">
+                            <div class="submission-header">
+                                <div>
+                                    <div class="submission-name">${sub.company_name}</div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 4px;">CAC: ${sub.cac_number}</div>
+                                </div>
+                                <div class="submission-status status-pending">⏳ Pending</div>
+                            </div>
+                            <div class="submission-details">
+                                <div class="detail-field">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value">${sub.email}</div>
+                                </div>
+                                <div class="detail-field">
+                                    <div class="detail-label">Phone</div>
+                                    <div class="detail-value">${sub.phone}</div>
+                                </div>
+                                <div class="detail-field">
+                                    <div class="detail-label">Address</div>
+                                    <div class="detail-value">${sub.address}</div>
+                                </div>
+                                <div class="detail-field">
+                                    <div class="detail-label">Certificate</div>
+                                    <div class="detail-value"><a href="${sub.certificate_url}" target="_blank" style="color: #667eea;">View Certificate</a></div>
+                                </div>
+                            </div>
+                            <div class="submission-actions">
+                                <button class="btn success" onclick="approvePremiumBrand('${sub.id}')">✅ Approve</button>
+                                <button class="btn danger" onclick="rejectPremiumBrand('${sub.id}')">❌ Reject</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    html = '<div class="empty-state"><p>✅ No pending submissions</p></div>';
+                }
+
+                document.getElementById('pendingSubmissions').innerHTML = html;
+
+                // Load featured brands
+                const featRes = await fetch(`${backendUrl}/api/premium-brand/active`, {
+                    headers: { 'x-admin-key': adminPassword }
+                });
+                if (featRes.ok) {
+                    const featData = await featRes.json();
+                    let slotsHtml = '';
+
+                    for (let i = 1; i <= 8; i++) {
+                        const brand = featData.brands?.[i - 1];
+                        if (brand) {
+                            slotsHtml += `
+                                <div class="slot filled">
+                                    <div class="slot-number">Slot #${i}</div>
+                                    <div class="slot-brand">${brand.company_name}</div>
+                                    <button class="btn danger slot-action" onclick="removeFromFeatured('${brand.id}', ${i})">Remove</button>
+                                </div>
+                            `;
+                        } else {
+                            slotsHtml += `
+                                <div class="slot">
+                                    <div class="slot-number">Slot #${i}</div>
+                                    <div style="color: #999; font-size: 12px;">Empty</div>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    document.getElementById('featuredSlots').innerHTML = slotsHtml;
+                }
+            } catch (err) {
+                document.getElementById('pendingSubmissions').innerHTML = `<div style="color: red;">Error: ${err.message}</div>`;
+            }
+        }
+
+        async function approvePremiumBrand(submissionId) {
+            showAlert('Approving submission...', 'info');
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/premium-brand/${submissionId}/approve`, {
+                    method: 'POST',
+                    headers: {
+                        'x-admin-key': adminPassword,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!res.ok) throw new Error('Approval failed');
+                showAlert('✅ Premium Brand approved!', 'success');
+                loadPremiumBrands();
+            } catch (err) {
+                showAlert(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        async function rejectPremiumBrand(submissionId) {
+            const reason = prompt('Enter rejection reason:');
+            if (!reason) return;
+
+            showAlert('Rejecting submission...', 'info');
+            try {
+                const res = await fetch(`${backendUrl}/api/admin/premium-brand/${submissionId}/reject`, {
+                    method: 'POST',
+                    headers: {
+                        'x-admin-key': adminPassword,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                if (!res.ok) throw new Error('Rejection failed');
+                showAlert('✅ Premium Brand rejected!', 'success');
+                loadPremiumBrands();
+            } catch (err) {
+                showAlert(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        async function removeFromFeatured(brandId, slot) {
+            if (confirm(`Remove from Slot #${slot}?`)) {
+                showAlert('Removing from featured...', 'info');
+                try {
+                    const res = await fetch(`${backendUrl}/api/admin/premium-brand/${brandId}/unfeature`, {
+                        method: 'POST',
+                        headers: {
+                            'x-admin-key': adminPassword,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!res.ok) throw new Error('Remove failed');
+                    showAlert('✅ Removed from featured!', 'success');
+                    loadPremiumBrands();
+                } catch (err) {
+                    showAlert(`❌ Error: ${err.message}`, 'error');
+                }
             }
         }
 
